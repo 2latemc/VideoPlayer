@@ -2,7 +2,7 @@
 
 # Overview
 This is a simple clean video player written in C#. This was made to make watching & following tutorials easier. \
-The player will float above any app, currently I try to keep it to as little ui as possible and handle all interactions using hotkeys.
+The player will float above any app,\ currently I try to keep it to as little ui as possible and handle all interactions using hotkeys.
 ![image](https://github.com/2latemc/VideoPlayer/assets/89020720/00cfe80b-71da-41f8-83fc-6c24a6d7699d)
 
 
