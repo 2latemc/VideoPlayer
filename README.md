@@ -3,11 +3,13 @@
 # Overview
 This is a simple clean video player written in C#. This was made to make watching & following tutorials easier. \
 The player will float above any app making watching videos easier.
+![image](https://github.com/2latemc/VideoPlayer/assets/89020720/00cfe80b-71da-41f8-83fc-6c24a6d7699d)
+
 
 # Installation
 Installer will be added later.
 
-Download the latest [release](https://github.com/2latemc/VideoPlayer/releases) from the release page. 
+Download the [lastest release](https://github.com/2latemc/VideoPlayer/releases) from the release page. 
 1. Open *C:\Program Files* and make a new folder called Video Player.
 2. Copy the downloaded files into the new folder
 3. Right click the exe, create a shortcut, move the shortcut to **C:\Users\<user>\AppData\Roaming\Microsoft\Windows\Start Menu**
