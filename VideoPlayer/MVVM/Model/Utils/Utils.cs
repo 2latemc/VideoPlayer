@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text;
+﻿using System.IO;
 
-namespace VideoPlayer.Code.Utils;
+namespace VideoPlayer.MVVM.Model.Utils;
 
 public class Utils {
     public static bool IsVideoFile(string filePath)

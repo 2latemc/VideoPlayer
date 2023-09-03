@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VideoPlayer.Code.Utils; 
+namespace VideoPlayer.MVVM.Model.Utils; 
 
 public class UrlUtils {
     public static bool IsValidFileUrl(string fileUrl) {

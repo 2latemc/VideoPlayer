@@ -1,25 +1,19 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using VideoPlayer.Code.Utils;
-using VideoPlayer.MVVM.Model.Utils;
 
 namespace VideoPlayer {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
 
-            PreviewKeyDown += MainWindow_KeyDown;
             MouseRightButtonDown += RightMouseDown;
             MouseRightButtonUp += RightMouseButtonUp;
-            MouseLeftButtonDown += LeftMouseDown;
             MouseMove += Window_MouseMove;
             SizeChanged += MaintainMediaAspectRatio;
 
             MediaElement.SizeChanged += FirstTimeSize;
         }
-
+        
         private void FirstTimeSize(object sender, SizeChangedEventArgs sizeChangedEventArgs) {
             MaintainMediaAspectRatio(null, null);
             MediaElement.SizeChanged -= FirstTimeSize;
@@ -74,57 +68,6 @@ namespace VideoPlayer {
                 double offsetY = currentPosition.Y - _clickPosition.Y;
                 Left += offsetX;
                 Top += offsetY;
-            }
-        }
-        private void MainWindow_KeyDown(object sender, KeyEventArgs e) {
-            switch (e.Key) {
-                case Key.Space:
-                    PauseVideo();
-                    break;
-                case Key.Left:
-                    Skip(true);
-                    break;
-                case Key.Right:
-                    Skip(false);
-                    break;
-                case Key.F:
-                    if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
-                    else WindowState = WindowState.Maximized;
-                    break;
-                case Key.T:
-                    Topmost = !Topmost;
-                    break;
-            }
-        }
-
-        private void LeftMouseDown(object sender, MouseButtonEventArgs e) {
-            PauseVideo();
-        }
-
-
-        private void Skip(bool isLeft) {
-            float skipTime = Settings.SkipTime;
-            if (isLeft) skipTime = -skipTime;
-
-
-            MediaElement.Position += TimeSpan.FromSeconds(skipTime);
-        }
-
-        private bool _videoPaused;
-
-        private void PauseVideo() {
-            if (!MediaElement.CanPause) {
-                ErrorUtils.ShowError("Could not pause idk why lol");
-                return;
-            }
-
-            if (_videoPaused) {
-                MediaElement.Play();
-                _videoPaused = false;
-            }
-            else {
-                _videoPaused = true;
-                MediaElement.Pause();
             }
         }
     }

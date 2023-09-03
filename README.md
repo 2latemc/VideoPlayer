@@ -37,3 +37,4 @@ Hover over the left part of the video to show the volume control.
 5. Create Installer
 6. Support more media types
 7. Proper error handling
+8. Visual feedback when skipping & changing volume & Topmost

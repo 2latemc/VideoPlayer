@@ -3,48 +3,74 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VideoPlayer"
-        xmlns:viewModel="clr-namespace:VideoPlayer.MVVM.ViewModel"
-        xmlns:utils="clr-namespace:VideoPlayer.MVVM.Model.Utils"
-        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Background="Black"
         WindowStyle="None"
         BorderThickness="0"
-        AllowsTransparency="False">
+        AllowsTransparency="False"
+        Topmost="{Binding Topmost}">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" GlassFrameThickness="0" CornerRadius="0" />
     </WindowChrome.WindowChrome>
 
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding PauseCommand}" Key="Space" />
+        <KeyBinding Command="{Binding SkipCommand}" Key="Left" CommandParameter="true"></KeyBinding>
+        <KeyBinding Command="{Binding SkipCommand}" Key="Right" CommandParameter="false"></KeyBinding>
+        <KeyBinding Command="{Binding FocusCommand}" Key="F"></KeyBinding>
+        <KeyBinding Command="{Binding TopmostCommand}" Key="T"></KeyBinding>
+        <MouseBinding Gesture="LeftClick" Command="{Binding PauseCommand}" />
+    </Window.InputBindings>
 
-    
-    <Grid Background="Black">
+    <Grid Background="White">
         <MediaElement
             x:Name="MediaElement"
             Source="{Binding CurrentMediaSource}"
             LoadedBehavior="Manual">
         </MediaElement>
-
+    
         <DockPanel>
-            <Border x:Name="VolumeBorder"
-                    Background="Transparent">
-                
-                <Slider x:Name="VolumeSlider"
-                        DockPanel.Dock="Left"
-                        Value="{Binding Volume}"
-                        Minimum="0"
-                        Maximum="1"
-                        Height="200"
-                        Focusable="False"
-                        Margin="10,0,10, 9"
-                        Orientation="Vertical"
-                        VerticalAlignment="Center"
-                        Visibility="{Binding HudVisibility}">
+            <Grid x:Name="VolumeBorder"
+                  Width="30"
+                  Margin="15 0 0 0"
+                  DockPanel.Dock="Left"
+                  Background="Transparent">
+                <Slider
+                    Style="{StaticResource MaterialDesignSlider}"
+                    Minimum="0"
+                    Maximum="1"
+                    Height="200"
+                    BorderThickness="0"
+                    Focusable="False"
+                    Orientation="Vertical"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Visibility="{Binding HudVisibility}"
+                    Value="{Binding Volume}">
                 </Slider>
+            </Grid>
+
+            <Grid Width="30"
+                  Margin="0 0 15 0"
+                  DockPanel.Dock="Right">
+
+            </Grid>
+
+            <Border VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="0 0 0 15">
+                <Border Width="300" Background="Gray" Padding="10" CornerRadius="10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Slider 
+                            VerticalAlignment="Center"
+                            Width="230" Margin="0 0 10 0 "
+                            Value="{Binding MediaElementSliderPos}"></Slider>
+                        <Label FontSize="13" VerticalAlignment="Center" 
+                               Content="{Binding VideoTime}"></Label>
+
+                    </StackPanel>
+                </Border>
             </Border>
-
-
+          
             <Border Margin="10"
                     x:Name="VolumeControlBorder"
                     DockPanel.Dock="Bottom"

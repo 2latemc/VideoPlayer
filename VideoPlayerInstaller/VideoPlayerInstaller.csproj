@@ -10,11 +10,11 @@
     <ItemGroup>
       <PackageReference Include="MaterialDesignColors" Version="3.0.0-ci330" />
       <PackageReference Include="MaterialDesignThemes" Version="5.0.0-ci330" />
-      <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="MVVM\ViewModel\Utils\" />
+      <Folder Include="MVVM\Model\" />
+      <Folder Include="MVVM\View\" />
     </ItemGroup>
 
 </Project>
