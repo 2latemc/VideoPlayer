@@ -36,7 +36,7 @@ namespace VideoPlayer {
             CheckFile(url);
         }
 
-        private static void CheckFile(string url) {
+        private void CheckFile(string url) {
             if (!UrlUtils.IsValidFileUrl(url)) {
                 ErrorUtils.ShowError("Invalid url!");
                 return;
@@ -56,11 +56,13 @@ namespace VideoPlayer {
         }
 
 
-        private static void StartPlayer(Uri uri) {
-            var window = new MainWindow();
-            var model = new MainWindowViewModel(uri, window.MediaElement);
-            window.DataContext = model;
-            window.Show();
+        private MainWindow _window;
+        private MainWindowViewModel _model;
+        private void StartPlayer(Uri uri) {
+            _window = new MainWindow();
+            _model = new MainWindowViewModel(uri, _window.MediaElement);
+            _window.DataContext = _model;
+            _window.Show();
         }
 
         private void FilePicker() {
@@ -75,6 +77,10 @@ namespace VideoPlayer {
             }
             
             CheckFile(dialog.FileName);
+        }
+
+        private void App_OnExit(object sender, ExitEventArgs e) {
+            _model.SaveManager.Save();
         }
     }
 }

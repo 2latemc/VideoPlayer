@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:VideoPlayer"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Exit="App_OnExit"
              xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=System.ComponentModel.TypeConverter">
     <Application.Resources>
         <ResourceDictionary>

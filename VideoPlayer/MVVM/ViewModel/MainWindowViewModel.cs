@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,29 +12,90 @@ namespace VideoPlayer.MVVM.ViewModel;
 public class MainWindowViewModel : ViewModelBase {
     private MediaElement _mediaElement;
     private MainWindow _mainWindow;
-    private SaveManager _saveManager;
+    
+    
+    public SaveManager SaveManager;
+
+
+    #region RelayCommands
+
+    public ICommand PauseCommand { get; set; }
+    public ICommand SkipCommand { get; set; }
+    public ICommand FocusCommand { get; set; }
+    public ICommand TopmostCommand { get; set; }
+
+    public ICommand TimelineSliderValueChanged { get; set; }
+
+    #endregion
 
     public MainWindowViewModel(Uri currentMediaSource, MediaElement mediaElement) {
         CurrentMediaSource = currentMediaSource;
         _mediaElement = mediaElement;
-        _saveManager = new SaveManager();
-        _mediaElement.Volume = _saveManager.Settings.StartVolume;
-
+        SaveManager = new SaveManager();
+        SaveManager.Load();
+        
+        Volume = SaveManager.Settings.StartVolume;
 
         _mainWindow = (MainWindow)(Application.Current.MainWindow ?? throw new InvalidOperationException());
-        _mainWindow.VolumeBorder.MouseEnter += (sender, args) => IsMouseOverHud = true;
-        _mainWindow.VolumeBorder.MouseLeave += (sender, args) => IsMouseOverHud = false;
+        
+        _mainWindow.VolumeBorder.MouseEnter += (sender, args) => IsMouseOverVolumeHud = true;
+        _mainWindow.VolumeBorder.MouseLeave += (sender, args) => IsMouseOverVolumeHud = false;
+        
+        _mainWindow.TimestampBorder.MouseEnter += (sender, args) => IsMouseOverTimelineHud = true;
+        _mainWindow.TimestampBorder.MouseLeave += (sender, args) => IsMouseOverTimelineHud = false;
+        
         SetupVideoPlayer();
 
         PauseCommand = new RelayCommand(PauseVideo);
         SkipCommand = new RelayCommand(SkipVideo);
-        FocusCommand = new RelayCommand((o => IsMaximized = !IsMaximized));
+        FocusCommand = new RelayCommand(o => IsMaximized = !IsMaximized);
         TopmostCommand = new RelayCommand(o => Topmost = !Topmost);
-
+        TimelineSliderValueChanged = new RelayCommand(newValue => TimeSliderValueChanged(newValue));
         SetupEventTick();
     }
 
-    private DispatcherTimer _timer;
+    private void TimeSliderValueChanged(object? o) {
+        Debug.WriteLine("CHangedlol");
+        
+        if (!_mediaElement.NaturalDuration.HasTimeSpan)
+            return;
+
+        double maxTime = _mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+    
+        // Ensure the input value is between 0 and 10
+        double value = Math.Min(10.0, Math.Max(0.0, _mainWindow.TimespanSlider.Value));
+    
+        // Calculate the position to set based on the input value
+        double newPosition = (value / 10) * maxTime;
+    
+        // Set the position of the MediaElement
+        _mediaElement.Position = TimeSpan.FromSeconds(newPosition);
+        
+        OnPropertyChanged(nameof(NormalizedVideoTimeSpan));
+    }
+
+    private DispatcherTimer _timer = null!;
+
+    public double NormalizedVideoTimeSpan {
+        get {
+            if (!_mediaElement.NaturalDuration.HasTimeSpan) return 0;
+
+            TimeSpan maxTime = _mediaElement.NaturalDuration.TimeSpan;
+            TimeSpan currentTime = _mediaElement.Position;
+
+            // Convert to seconds for normalization
+            double maxSeconds = maxTime.TotalSeconds;
+            double currentSeconds = currentTime.TotalSeconds;
+
+            // Calculate the normalized value
+            double normalizedValue = currentSeconds / maxSeconds;
+
+            // Ensure the result is between 0 and 1
+            normalizedValue = Math.Min(1.0, Math.Max(0.0, normalizedValue));
+
+            return normalizedValue * 10;
+        }
+    }
 
     private void SetupEventTick() {
         _timer = new DispatcherTimer();
@@ -55,21 +117,13 @@ public class MainWindowViewModel : ViewModelBase {
         }
     }
 
-    public float MediaElementSliderPos {
-        set {
-            double totalDurationInSeconds = _mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-            TimeSpan newPosition = TimeSpan.FromSeconds(value * totalDurationInSeconds);
-            _mediaElement.Position = newPosition;
-        }
-    }
-
     public Uri CurrentMediaSource { get; set; }
 
     private bool _isMaximized;
 
     private bool _topmost = true;
 
-    private bool Topmost {
+    public bool Topmost {
         get => _topmost;
         set {
             _topmost = value;
@@ -92,35 +146,53 @@ public class MainWindowViewModel : ViewModelBase {
         }
     }
 
-    /* Relay Commands */
 
-    public ICommand PauseCommand { get; set; }
-    public ICommand SkipCommand { get; set; }
-    public ICommand FocusCommand { get; set; }
+    #region Visibility
 
-    public ICommand TopmostCommand { get; set; }
+    //volume hud
+    private bool _isMouseOverVolumeHud;
 
-    private bool _isMouseOverHud;
-
-    private bool IsMouseOverHud {
-        get => _isMouseOverHud;
+    private bool IsMouseOverVolumeHud {
+        get => _isMouseOverVolumeHud;
         set {
-            _isMouseOverHud = value;
-            OnPropertyChanged(nameof(HudVisibility));
+            _isMouseOverVolumeHud = value;
+            OnPropertyChanged(nameof(VolumeHudVisibility));
         }
     }
 
-    public Visibility HudVisibility {
+    public Visibility VolumeHudVisibility {
         get {
-            if (IsMouseOverHud) return Visibility.Visible;
+            if (IsMouseOverVolumeHud) return Visibility.Visible;
             return Visibility.Hidden;
         }
     }
+
+    //timeline
+    private bool _isMouseOverTimelineHud;
+
+    private bool IsMouseOverTimelineHud {
+        get => _isMouseOverTimelineHud;
+        set {
+            _isMouseOverTimelineHud = value;
+            OnPropertyChanged(nameof(TimelineHudVisibility));
+        }
+    }
+
+    public Visibility TimelineHudVisibility {
+        get {
+            if (IsMouseOverTimelineHud) return Visibility.Visible;
+            return Visibility.Hidden;
+        }
+    }
+    
+    
+    #endregion
 
     public double Volume {
         get => _mediaElement.Volume;
         set {
             _mediaElement.Volume = value;
+            SaveManager.CachedVolumeTilShutdown = value;
             OnPropertyChanged(nameof(VolumeText));
             OnPropertyChanged();
         }
@@ -129,6 +201,7 @@ public class MainWindowViewModel : ViewModelBase {
     public string VolumeText {
         get {
             int volume = (int)(Volume * 100);
+            if (volume == 69) volume = 68;
             switch (volume) {
                 case 0:
                     return "Muted";
@@ -171,7 +244,7 @@ public class MainWindowViewModel : ViewModelBase {
         try {
             bool isLeft = Convert.ToBoolean(o);
             Console.WriteLine();
-            float skipTime = _saveManager.Settings.SkipTime;
+            float skipTime = SaveManager.Settings.SkipTime;
             if (isLeft) skipTime = -skipTime; /* IsLeft*/
 
             _mediaElement.Position += TimeSpan.FromSeconds(skipTime);

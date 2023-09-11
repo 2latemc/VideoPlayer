@@ -3,8 +3,14 @@ using System.Runtime.Serialization;
 
 namespace VideoPlayer.MVVM.Model; 
 
-public class Settings {
+[DataContract]
+public struct Settings {
     [DataMember] public float SkipTime = 10;
     
-    [DataMember] public float StartVolume = 1f;
+    [DataMember] public double StartVolume = 1f;
+
+    public Settings(float skipTime, double startVolume) {
+        SkipTime = skipTime;
+        StartVolume = startVolume;
+    }
 }

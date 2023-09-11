@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
         Background="Black"
@@ -46,7 +47,7 @@
                     Orientation="Vertical"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Visibility="{Binding HudVisibility}"
+                    Visibility="{Binding VolumeHudVisibility}"
                     Value="{Binding Volume}">
                 </Slider>
             </Grid>
@@ -57,13 +58,26 @@
 
             </Grid>
 
-            <Border VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="0 0 0 15">
-                <Border Width="300" Background="Gray" Padding="10" CornerRadius="10">
+            <Border 
+                VerticalAlignment="Bottom" 
+                x:Name="TimestampBorder" 
+                DockPanel.Dock="Bottom"
+                Background="Transparent"
+                Margin="0 0 0 15">
+                <Border Width="300" Background="Gray" Padding="10" CornerRadius="10"
+                        Visibility="{Binding TimelineHudVisibility}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Slider 
+                        <Slider
+                            Name="TimespanSlider"
+                            Value="{Binding NormalizedVideoTimeSpan, UpdateSourceTrigger=Explicit, Mode=OneWay}"
                             VerticalAlignment="Center"
-                            Width="230" Margin="0 0 10 0 "
-                            Value="{Binding MediaElementSliderPos}"></Slider>
+                            Width="230" Margin="0 0 10 0 ">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="ValueChanged">
+                                    <b:InvokeCommandAction Command="{Binding TimelineSliderValueChanged}"/>
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
+                        </Slider>
                         <Label FontSize="13" VerticalAlignment="Center" 
                                Content="{Binding VideoTime}"></Label>
 
@@ -77,7 +91,7 @@
                     VerticalAlignment="Bottom"
                     Background="Black"
                     Height="25"
-                    Visibility="{Binding HudVisibility}"
+                    Visibility="{Binding VolumeHudVisibility}"
                     CornerRadius="5"
                     Width="60">
                 <Label x:Name="VolumeLabel" HorizontalAlignment="Center"
