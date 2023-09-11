@@ -29,11 +29,15 @@ public class SaveManager {
     }
 
     public void Load() {
-        _settings = Serializor.FromFile<Settings>(StaticVariables.SavePath);
-        if (_settings == null) {
-            _settings = new Settings();
-            Save();
+        var s = Serializor.FromFile<Settings>(StaticVariables.SavePath);
+        if (s == null) {
+            s = new Settings() {
+                SkipTime = 10,
+                StartVolume = 1f
+            };
         }
+
+        Settings = ((Settings?) s).Value;
     }
 
     public void Save() {

@@ -8,6 +8,8 @@ namespace VideoPlayer.MVVM.Model.Utils;
 public class Serializor {
     public static void ToFile<T>(T obj, string path) {
         try {
+            if(!Directory.Exists(Path.GetDirectoryName(StaticVariables.SavePath))) Directory.CreateDirectory(Path.GetDirectoryName(StaticVariables.SavePath) ?? throw new InvalidOperationException());
+            
             var serializer = new DataContractSerializer(typeof(T));
             using var writer = new FileStream(path, FileMode.OpenOrCreate);
 
@@ -18,9 +20,9 @@ public class Serializor {
         }
     }
 
-    public static T? FromFile<T>(string path) {
+    public static object? FromFile<T>(string path) {
         try {
-            if(!File.Exists(path)) return default;
+            if(!File.Exists(path)) return null;
             
             var serializer = new DataContractSerializer(typeof(T));
             using var reader = new FileStream(path, FileMode.Open);
@@ -29,7 +31,7 @@ public class Serializor {
         }
         catch (Exception e) {
             Debug.WriteLine("There was an error when deserializing: " + e);
-            return default;
+            return null;
         }
     }
 }
