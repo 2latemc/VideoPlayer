@@ -10,12 +10,7 @@ currently I try to keep it to as little ui as possible and handle all interactio
 # Installation
 Installer will be added later.
 
-Download the [lastest release](https://github.com/2latemc/VideoPlayer/releases) from the release page. 
-1. Open *C:\Program Files* and make a new folder called Video Player.
-2. Copy the downloaded files into the new folder
-3. Right click the exe, create a shortcut, move the shortcut to **C:\Users\<user>\AppData\Roaming\Microsoft\Windows\Start Menu**
-4. Right click a video file -> Open With -> Choose another app -> Scroll down and select "More Apps" -> Browse the programs exe and select open
-5. Right click a video file again, go to open with, Choose another app, and select the Video Player. Make sure to tick "Always use this App to open"
+Download the [lastest release](https://github.com/2latemc/VideoPlayer/releases) from the release page and run the setup. 
 
 
 # Usage
