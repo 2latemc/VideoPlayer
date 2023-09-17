@@ -8,7 +8,6 @@ currently I try to keep it to as little ui as possible and handle all interactio
 
 
 # Installation
-Installer will be added later.
 
 Download the [lastest release](https://github.com/2latemc/VideoPlayer/releases) from the release page and run the setup. 
 
@@ -26,6 +25,6 @@ Download the [lastest release](https://github.com/2latemc/VideoPlayer/releases) 
 1. Implement timeline
 2. Fix volume controls
 3. Make UI prettier
-4. Create Installer
+4. Create Installer (done)
 5. Support more media types
 6. Proper error handling
