@@ -25,6 +25,8 @@ public class MainWindowViewModel : ViewModelBase {
     public ICommand TopmostCommand { get; set; }
 
     public ICommand TimelineSliderValueChanged { get; set; }
+    
+    public ICommand CloseAppCommand { get; set; }
 
     #endregion
 
@@ -50,6 +52,7 @@ public class MainWindowViewModel : ViewModelBase {
         SkipCommand = new RelayCommand(SkipVideo);
         FocusCommand = new RelayCommand(o => IsMaximized = !IsMaximized);
         TopmostCommand = new RelayCommand(o => Topmost = !Topmost);
+        CloseAppCommand = new RelayCommand(o => Application.Current.Shutdown());
         TimelineSliderValueChanged = new RelayCommand(newValue => TimeSliderValueChanged(newValue));
         SetupEventTick();
     }

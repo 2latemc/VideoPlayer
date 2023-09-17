@@ -30,8 +30,35 @@
             Source="{Binding CurrentMediaSource}"
             LoadedBehavior="Manual">
         </MediaElement>
-    
+
         <DockPanel>
+            <Button Cursor="Hand" BorderThickness="0" DockPanel.Dock="Right" Margin="5" Height="20" Width="20"  VerticalAlignment="Top" Command="{Binding CloseAppCommand }" ><Button.Style>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                        
+                        <Style.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="30" />
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+                </Button.Style>
+            </Button>
+            
             <Grid x:Name="VolumeBorder"
                   Width="30"
                   Margin="15 0 0 0"
@@ -58,9 +85,9 @@
 
             </Grid>
 
-            <Border 
-                VerticalAlignment="Bottom" 
-                x:Name="TimestampBorder" 
+            <Border
+                VerticalAlignment="Bottom"
+                x:Name="TimestampBorder"
                 DockPanel.Dock="Bottom"
                 Background="Transparent"
                 Margin="0 0 0 15">
@@ -74,17 +101,18 @@
                             Width="230" Margin="0 0 10 0 ">
                             <b:Interaction.Triggers>
                                 <b:EventTrigger EventName="ValueChanged">
-                                    <b:InvokeCommandAction Command="{Binding TimelineSliderValueChanged}"/>
+                                    <b:InvokeCommandAction Command="{Binding TimelineSliderValueChanged}" />
                                 </b:EventTrigger>
                             </b:Interaction.Triggers>
                         </Slider>
-                        <Label FontSize="13" VerticalAlignment="Center" 
-                               Content="{Binding VideoTime}"></Label>
+                        <Label FontSize="13" VerticalAlignment="Center"
+                               Content="{Binding VideoTime}">
+                        </Label>
 
                     </StackPanel>
                 </Border>
             </Border>
-          
+
             <Border Margin="10"
                     x:Name="VolumeControlBorder"
                     DockPanel.Dock="Bottom"
