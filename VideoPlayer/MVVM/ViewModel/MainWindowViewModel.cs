@@ -16,7 +16,9 @@ public class MainWindowViewModel : ViewModelBase {
     
     public SaveManager SaveManager;
 
-
+    
+    public event EventHandler? PlaybackEnded;
+    
     #region RelayCommands
 
     public ICommand PauseCommand { get; set; }
@@ -36,6 +38,8 @@ public class MainWindowViewModel : ViewModelBase {
         SaveManager = new SaveManager();
         SaveManager.Load();
         
+        PlaybackEnded += (sender, args) => SaveManager.AddVideoTimeSpan(CurrentMediaSource.LocalPath, _mediaElement.Position);
+        
         Volume = SaveManager.Settings.StartVolume;
 
         _mainWindow = (MainWindow)(Application.Current.MainWindow ?? throw new InvalidOperationException());
@@ -52,8 +56,11 @@ public class MainWindowViewModel : ViewModelBase {
         SkipCommand = new RelayCommand(SkipVideo);
         FocusCommand = new RelayCommand(o => IsMaximized = !IsMaximized);
         TopmostCommand = new RelayCommand(o => Topmost = !Topmost);
-        CloseAppCommand = new RelayCommand(o => Application.Current.Shutdown());
-        TimelineSliderValueChanged = new RelayCommand(newValue => TimeSliderValueChanged(newValue));
+        CloseAppCommand = new RelayCommand(o => {
+            PlaybackEnded?.Invoke(this, EventArgs.Empty);
+            Application.Current.Shutdown();
+        });
+        TimelineSliderValueChanged = new RelayCommand(TimeSliderValueChanged);
         SetupEventTick();
     }
 

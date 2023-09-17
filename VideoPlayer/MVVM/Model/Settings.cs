@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 namespace VideoPlayer.MVVM.Model; 
 
 [DataContract]
-public struct Settings {
-    [DataMember] public float SkipTime = 10;
+public class Settings {
+    [DataMember] public float SkipTime;
     
-    [DataMember] public double StartVolume = 1f;
+    [DataMember] public double StartVolume;
 
     public Settings(float skipTime, double startVolume) {
         SkipTime = skipTime;
