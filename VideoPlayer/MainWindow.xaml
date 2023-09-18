@@ -95,15 +95,11 @@
                         Visibility="{Binding TimelineHudVisibility}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Slider
+                            Thumb.DragCompleted="TimespanSlider_OnValueChanged"
                             Name="TimespanSlider"
                             Value="{Binding NormalizedVideoTimeSpan, UpdateSourceTrigger=Explicit, Mode=OneWay}"
                             VerticalAlignment="Center"
                             Width="230" Margin="0 0 10 0 ">
-                            <b:Interaction.Triggers>
-                                <b:EventTrigger EventName="ValueChanged">
-                                    <b:InvokeCommandAction Command="{Binding TimelineSliderValueChanged}" />
-                                </b:EventTrigger>
-                            </b:Interaction.Triggers>
                         </Slider>
                         <Label FontSize="13" VerticalAlignment="Center"
                                Content="{Binding VideoTime}">

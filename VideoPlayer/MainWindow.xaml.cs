@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace VideoPlayer {
@@ -70,6 +72,12 @@ namespace VideoPlayer {
                 Left += offsetX;
                 Top += offsetY;
             }
+        }
+
+        
+        public event EventHandler? SliderDragCompletedEvent;
+        private void TimespanSlider_OnValueChanged(object sender, DragCompletedEventArgs dragCompletedEventArgs) {
+            SliderDragCompletedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -20,7 +20,6 @@ public class SaveManager {
 
     private Dictionary<ulong, TimeSpan> VideoTimeSpans {
         get {
-            LoadTimeSpans();
             if(_videoTimeSpans == null) _videoTimeSpans = new Dictionary<ulong, TimeSpan>();
             return _videoTimeSpans;
         }
@@ -38,8 +37,11 @@ public class SaveManager {
 
     public void AddVideoTimeSpan(string path, TimeSpan timeSpan) {
         if (!File.Exists(path)) return;
-        ulong fileId = UniqueFileId.GetUniqueIdByFilePath(path);
         
+        LoadTimeSpans();
+        
+        ulong fileId = UniqueFileId.GetUniqueIdByFilePath(path);
+
         VideoTimeSpans[fileId] = timeSpan;
         
         Serializor.ToFile(VideoTimeSpans, StaticVariables.TimeSpansSavePath);

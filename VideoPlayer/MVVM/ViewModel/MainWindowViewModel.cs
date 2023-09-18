@@ -12,13 +12,13 @@ namespace VideoPlayer.MVVM.ViewModel;
 public class MainWindowViewModel : ViewModelBase {
     private MediaElement _mediaElement;
     private MainWindow _mainWindow;
-    
-    
+
+
     public SaveManager SaveManager;
 
-    
+
     public event EventHandler? PlaybackEnded;
-    
+
     #region RelayCommands
 
     public ICommand PauseCommand { get; set; }
@@ -27,7 +27,7 @@ public class MainWindowViewModel : ViewModelBase {
     public ICommand TopmostCommand { get; set; }
 
     public ICommand TimelineSliderValueChanged { get; set; }
-    
+
     public ICommand CloseAppCommand { get; set; }
 
     #endregion
@@ -37,19 +37,19 @@ public class MainWindowViewModel : ViewModelBase {
         _mediaElement = mediaElement;
         SaveManager = new SaveManager();
         SaveManager.Load();
-        
-        PlaybackEnded += (sender, args) => SaveManager.AddVideoTimeSpan(CurrentMediaSource.LocalPath, _mediaElement.Position);
-        
         Volume = SaveManager.Settings.StartVolume;
 
         _mainWindow = (MainWindow)(Application.Current.MainWindow ?? throw new InvalidOperationException());
-        
+
         _mainWindow.VolumeBorder.MouseEnter += (sender, args) => IsMouseOverVolumeHud = true;
         _mainWindow.VolumeBorder.MouseLeave += (sender, args) => IsMouseOverVolumeHud = false;
-        
+
         _mainWindow.TimestampBorder.MouseEnter += (sender, args) => IsMouseOverTimelineHud = true;
         _mainWindow.TimestampBorder.MouseLeave += (sender, args) => IsMouseOverTimelineHud = false;
         
+        _mainWindow.Closing += (sender, args) => AddVideoTimeSpan();
+        PlaybackEnded += (sender, args) => AddVideoTimeSpan();
+
         SetupVideoPlayer();
 
         PauseCommand = new RelayCommand(PauseVideo);
@@ -62,30 +62,38 @@ public class MainWindowViewModel : ViewModelBase {
         });
         TimelineSliderValueChanged = new RelayCommand(TimeSliderValueChanged);
         SetupEventTick();
+
+        _mainWindow.SliderDragCompletedEvent += (sender, args) => {
+            Environment.Exit(0);
+        };
+    }
+
+    private void AddVideoTimeSpan() {
+        SaveManager.AddVideoTimeSpan(CurrentMediaSource.LocalPath, _mediaElement.Position);
     }
 
     private void TimeSliderValueChanged(object? o) {
-        Debug.WriteLine("CHangedlol");
+        // Debug.WriteLine("CHangedlol");
+        //
+        // if (!_mediaElement.NaturalDuration.HasTimeSpan)
+        //     return;
+        //
+        // double maxTime = _mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+        //
+        // // Ensure the input value is between 0 and 10
+        // double value = Math.Min(10.0, Math.Max(0.0, _mainWindow.TimespanSlider.Value));
+        //
+        // // Calculate the position to set based on the input value
+        // double newPosition = (value / 10) * maxTime;
+        //
+        // // Set the position of the MediaElement
+        // _mediaElement.Position = TimeSpan.FromSeconds(newPosition);
         
-        if (!_mediaElement.NaturalDuration.HasTimeSpan)
-            return;
-
-        double maxTime = _mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-    
-        // Ensure the input value is between 0 and 10
-        double value = Math.Min(10.0, Math.Max(0.0, _mainWindow.TimespanSlider.Value));
-    
-        // Calculate the position to set based on the input value
-        double newPosition = (value / 10) * maxTime;
-    
-        // Set the position of the MediaElement
-        _mediaElement.Position = TimeSpan.FromSeconds(newPosition);
-        
-        OnPropertyChanged(nameof(NormalizedVideoTimeSpan));
+        Environment.Exit(0);
     }
 
     private DispatcherTimer _timer = null!;
-
+    
     public double NormalizedVideoTimeSpan {
         get {
             if (!_mediaElement.NaturalDuration.HasTimeSpan) return 0;
@@ -194,8 +202,7 @@ public class MainWindowViewModel : ViewModelBase {
             return Visibility.Hidden;
         }
     }
-    
-    
+
     #endregion
 
     public double Volume {
@@ -223,7 +230,13 @@ public class MainWindowViewModel : ViewModelBase {
 
     private void SetupVideoPlayer() {
         try {
+            
+            SaveManager.LoadTimeSpans();
+            var timeSpan = SaveManager.GetVideoTimeSpanByFileId(CurrentMediaSource.LocalPath);
+
             _mediaElement.Play();
+            _mediaElement.Position = timeSpan;
+            OnPropertyChanged(nameof(NormalizedVideoTimeSpan));
         }
         catch (Exception ex) {
             ErrorUtils.ShowError("Could not play video", ex.Message);
