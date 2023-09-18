@@ -1,4 +1,4 @@
-for some reason windows defender decided to flag this as malware. I have no idea why (it might be becauee I get unique file ids to save Watch Time). I am currently trying to fix this being flagged, for now you can check the Source Code if you want to ensure that this is safe.
+For some reason Windows Defender decided to flag this as malware. I have no idea why (it might be becauee I get unique file ids to save Watch Time). I am currently trying to fix this being flagged, for now you can check the Source Code if you want to ensure that this is safe.
 
 
 **This is a prototype.**
